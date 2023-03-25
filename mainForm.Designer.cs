@@ -78,7 +78,6 @@ namespace Notepad_Z
             this.wordWrapStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.caretPosStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.textBoxMain = new System.Windows.Forms.TextBox();
-            this.findAndReplacePopup = new Notepad_Z.FindAndReplaceControl();
             this.textBoxMainContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.undoContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.separatorContext1 = new System.Windows.Forms.ToolStripSeparator();
@@ -89,8 +88,10 @@ namespace Notepad_Z
             this.separatorContext2 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.separatorContext3 = new System.Windows.Forms.ToolStripSeparator();
-            this.checkDirContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkFolderPathContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkFolderPermissionsContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkPathAndPermissionsContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findAndReplacePopup = new Notepad_Z.FindAndReplaceControl();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.textBoxMainContextMenuStrip.SuspendLayout();
@@ -134,21 +135,21 @@ namespace Notepad_Z
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.newToolStripMenuItem.Text = "&New                     Ctrl+N";
-            this.newToolStripMenuItem.Click += newToolStripMenuItem_Click;
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // newWindowToolStripMenuItem
             // 
             this.newWindowToolStripMenuItem.Name = "newWindowToolStripMenuItem";
             this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.newWindowToolStripMenuItem.Text = "New &Window     Ctrl+W";
-            this.newWindowToolStripMenuItem.Click += newWindowToolStripMenuItem_Click;
+            this.newWindowToolStripMenuItem.Click += new System.EventHandler(this.newWindowToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.openToolStripMenuItem.Text = "&Open...                Ctrl+O";
-            this.openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -160,13 +161,14 @@ namespace Notepad_Z
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.saveToolStripMenuItem.Text = "&Save                     Ctrl+S";
-            this.saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -178,7 +180,7 @@ namespace Notepad_Z
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -197,14 +199,14 @@ namespace Notepad_Z
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 23);
             this.editToolStripMenuItem.Text = "&Edit";
-            this.editToolStripMenuItem.Click += editToolStripMenuItem_Click;
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.undoToolStripMenuItem.Text = "&Undo                    Ctrl+Z";
-            this.undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -216,28 +218,28 @@ namespace Notepad_Z
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
             this.cutToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.cutToolStripMenuItem.Text = "Cu&t                       Ctrl+X";
-            this.cutToolStripMenuItem.Click += cutToolStripMenuItem_Click;
+            this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.copyToolStripMenuItem.Text = "&Copy                    Ctrl+C";
-            this.copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.pasteToolStripMenuItem.Text = "&Paste                    Ctrl+V";
-            this.pasteToolStripMenuItem.Click += pasteToolStripMenuItem_Click;
+            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.deleteToolStripMenuItem.Text = "De&lete                        Del";
-            this.deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
@@ -249,14 +251,14 @@ namespace Notepad_Z
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.findToolStripMenuItem.Text = "&Find                     Ctrl+F";
-            this.findToolStripMenuItem.Click += findToolStripMenuItem_Click;
+            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
             // replaceToolStripMenuItem
             // 
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
             this.replaceToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.replaceToolStripMenuItem.Text = "&Replace               Ctrl+H";
-            this.replaceToolStripMenuItem.Click += replaceToolStripMenuItem_Click;
+            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -268,7 +270,7 @@ namespace Notepad_Z
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.selectAllToolStripMenuItem.Text = "Select &All             Ctrl+A";
-            this.selectAllToolStripMenuItem.Click += selectAllToolStripMenuItem_Click;
+            this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -288,7 +290,7 @@ namespace Notepad_Z
             this.wordWrapToolStripMenuItem.Name = "wordWrapToolStripMenuItem";
             this.wordWrapToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.wordWrapToolStripMenuItem.Text = "&Word Wrap";
-            this.wordWrapToolStripMenuItem.Click += wordWrapToolStripMenuItem_Click;
+            this.wordWrapToolStripMenuItem.Click += new System.EventHandler(this.wordWrapToolStripMenuItem_Click);
             // 
             // statusBarToolStripMenuItem
             // 
@@ -297,14 +299,14 @@ namespace Notepad_Z
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
             this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.statusBarToolStripMenuItem.Text = "&Status Bar";
-            this.statusBarToolStripMenuItem.Click += statusBarToolStripMenuItem_Click;
+            this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.statusBarToolStripMenuItem_Click);
             // 
             // fontToolStripMenuItem
             // 
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
             this.fontToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.fontToolStripMenuItem.Text = "&Font...";
-            this.fontToolStripMenuItem.Click += fontToolStripMenuItem_Click;
+            this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
             // 
             // zoomToolStripMenuItem
             // 
@@ -321,21 +323,21 @@ namespace Notepad_Z
             this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
             this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.zoomInToolStripMenuItem.Text = "Zoom &In             Ctrl+Plus";
-            this.zoomInToolStripMenuItem.Click += zoomInToolStripMenuItem_Click;
+            this.zoomInToolStripMenuItem.Click += new System.EventHandler(this.zoomInToolStripMenuItem_Click);
             // 
             // zoomOutToolStripMenuItem
             // 
             this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
             this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.zoomOutToolStripMenuItem.Text = "Zoom &Out      Ctrl+Minus";
-            this.zoomOutToolStripMenuItem.Click += zoomOutToolStripMenuItem_Click;
+            this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.zoomOutToolStripMenuItem_Click);
             // 
             // resetZoomToolStripMenuItem
             // 
             this.resetZoomToolStripMenuItem.Name = "resetZoomToolStripMenuItem";
             this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.resetZoomToolStripMenuItem.Text = "&Reset Zoom            Ctrl+0";
-            this.resetZoomToolStripMenuItem.Click += resetZoomToolStripMenuItem_Click;
+            this.resetZoomToolStripMenuItem.Click += new System.EventHandler(this.resetZoomToolStripMenuItem_Click);
             // 
             // templateToolStripComboBox
             // 
@@ -344,13 +346,14 @@ namespace Notepad_Z
             this.templateToolStripComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.templateToolStripComboBox.Name = "templateToolStripComboBox";
             this.templateToolStripComboBox.Size = new System.Drawing.Size(140, 23);
+            this.templateToolStripComboBox.SelectedIndexChanged += new System.EventHandler(this.templateToolStripComboBox_SelectedIndexChanged);
             // 
             // lineBreakToolStripMenuItem
             // 
             this.lineBreakToolStripMenuItem.Name = "lineBreakToolStripMenuItem";
             this.lineBreakToolStripMenuItem.Size = new System.Drawing.Size(73, 23);
             this.lineBreakToolStripMenuItem.Text = "Line &Break";
-            this.lineBreakToolStripMenuItem.Click += lineBreakToolStripMenuItem_Click;
+            this.lineBreakToolStripMenuItem.Click += new System.EventHandler(this.lineBreakToolStripMenuItem_Click);
             // 
             // prefStripMenuItem
             // 
@@ -378,7 +381,7 @@ namespace Notepad_Z
             this.enableTemplateToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.enableTemplateToolStripMenuItem.Text = "Templates";
             this.enableTemplateToolStripMenuItem.ToolTipText = "Check to enable Templates";
-            this.enableTemplateToolStripMenuItem.Click += enableTemplateToolStripMenuItem_Click;
+            this.enableTemplateToolStripMenuItem.Click += new System.EventHandler(this.enableTemplateToolStripMenuItem_Click);
             // 
             // enableLineBreakToolStripMenuItem
             // 
@@ -390,7 +393,7 @@ namespace Notepad_Z
             this.enableLineBreakToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.enableLineBreakToolStripMenuItem.Text = "Line Break";
             this.enableLineBreakToolStripMenuItem.ToolTipText = "Check to enable Line Break";
-            this.enableLineBreakToolStripMenuItem.Click += enableLineBreakToolStripMenuItem_Click;
+            this.enableLineBreakToolStripMenuItem.Click += new System.EventHandler(this.enableLineBreakToolStripMenuItem_Click);
             // 
             // mainSaveFileDialog
             // 
@@ -491,11 +494,108 @@ namespace Notepad_Z
             this.textBoxMain.Size = new System.Drawing.Size(458, 478);
             this.textBoxMain.TabIndex = 8;
             this.textBoxMain.WordWrap = false;
-            this.textBoxMain.TextChanged += textBoxMain_TextChanged;
-            this.textBoxMain.KeyDown += textBoxMain_KeyDown;
-            this.textBoxMain.KeyUp += textBoxMain_KeyUp;
-            this.textBoxMain.Leave += textBoxMain_Leave;
-            this.textBoxMain.MouseDown += textBoxMain_MouseDown;
+            this.textBoxMain.TextChanged += new System.EventHandler(this.textBoxMain_TextChanged);
+            this.textBoxMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxMain_KeyDown);
+            this.textBoxMain.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxMain_KeyUp);
+            this.textBoxMain.Leave += new System.EventHandler(this.textBoxMain_Leave);
+            this.textBoxMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBoxMain_MouseDown);
+            // 
+            // textBoxMainContextMenuStrip
+            // 
+            this.textBoxMainContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.undoContextMenuItem,
+            this.separatorContext1,
+            this.cutContextMenuItem,
+            this.copyContextMenuItem,
+            this.pasteContextMenuItem,
+            this.deleteContextMenuItem,
+            this.separatorContext2,
+            this.selectAllContextMenuItem,
+            this.separatorContext3,
+            this.checkFolderPathContextMenuItem,
+            this.checkFolderPermissionsContextMenuItem,
+            this.checkPathAndPermissionsContextMenuItem});
+            this.textBoxMainContextMenuStrip.Name = "contextMenuStrip";
+            this.textBoxMainContextMenuStrip.Size = new System.Drawing.Size(224, 242);
+            this.textBoxMainContextMenuStrip.Opened += new System.EventHandler(this.textBoxMainContexMenuStrip_Opened);
+            // 
+            // undoContextMenuItem
+            // 
+            this.undoContextMenuItem.Name = "undoContextMenuItem";
+            this.undoContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.undoContextMenuItem.Text = "Undo";
+            this.undoContextMenuItem.Click += new System.EventHandler(this.undoContextMenuItem_Click);
+            // 
+            // separatorContext1
+            // 
+            this.separatorContext1.Name = "separatorContext1";
+            this.separatorContext1.Size = new System.Drawing.Size(220, 6);
+            // 
+            // cutContextMenuItem
+            // 
+            this.cutContextMenuItem.Name = "cutContextMenuItem";
+            this.cutContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.cutContextMenuItem.Text = "Cut";
+            this.cutContextMenuItem.Click += new System.EventHandler(this.cutContextMenuItem_Click);
+            // 
+            // copyContextMenuItem
+            // 
+            this.copyContextMenuItem.Name = "copyContextMenuItem";
+            this.copyContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.copyContextMenuItem.Text = "Copy";
+            this.copyContextMenuItem.Click += new System.EventHandler(this.copyContextMenuItem_Click);
+            // 
+            // pasteContextMenuItem
+            // 
+            this.pasteContextMenuItem.Name = "pasteContextMenuItem";
+            this.pasteContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.pasteContextMenuItem.Text = "Paste";
+            this.pasteContextMenuItem.Click += new System.EventHandler(this.pasteContextMenuItem_Click);
+            // 
+            // deleteContextMenuItem
+            // 
+            this.deleteContextMenuItem.Name = "deleteContextMenuItem";
+            this.deleteContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.deleteContextMenuItem.Text = "Delete";
+            this.deleteContextMenuItem.Click += new System.EventHandler(this.deleteContextMenuItem_Click);
+            // 
+            // separatorContext2
+            // 
+            this.separatorContext2.Name = "separatorContext2";
+            this.separatorContext2.Size = new System.Drawing.Size(220, 6);
+            // 
+            // selectAllContextMenuItem
+            // 
+            this.selectAllContextMenuItem.Name = "selectAllContextMenuItem";
+            this.selectAllContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.selectAllContextMenuItem.Text = "Select All";
+            this.selectAllContextMenuItem.Click += new System.EventHandler(this.selectAllContextMenuItem_Click);
+            // 
+            // separatorContext3
+            // 
+            this.separatorContext3.Name = "separatorContext3";
+            this.separatorContext3.Size = new System.Drawing.Size(220, 6);
+            // 
+            // checkFolderPathContextMenuItem
+            // 
+            this.checkFolderPathContextMenuItem.Name = "checkFolderPathContextMenuItem";
+            this.checkFolderPathContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.checkFolderPathContextMenuItem.Text = "Check Folder Path";
+            this.checkFolderPathContextMenuItem.Click += new System.EventHandler(this.checkFolderPathContextMenuItem_Click);
+            // 
+            // checkFolderPermissionsContextMenuItem
+            // 
+            this.checkFolderPermissionsContextMenuItem.Name = "checkFolderPermissionsContextMenuItem";
+            this.checkFolderPermissionsContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.checkFolderPermissionsContextMenuItem.Text = "Check Folder Permissions";
+            this.checkFolderPermissionsContextMenuItem.Click += new System.EventHandler(this.checkFolderPermissionsContextMenuItem_Click);
+            // 
+            // checkPathAndPermissionsContextMenuItem
+            // 
+            this.checkPathAndPermissionsContextMenuItem.Name = "checkPathAndPermissionsContextMenuItem";
+            this.checkPathAndPermissionsContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.checkPathAndPermissionsContextMenuItem.Text = "Check Path and Permissions";
+            this.checkPathAndPermissionsContextMenuItem.Click += new System.EventHandler(this.checkPathAndPermissionsContextMenuItem_Click);
             // 
             // findAndReplacePopup
             // 
@@ -517,97 +617,9 @@ namespace Notepad_Z
             this.findAndReplacePopup.TabStop = false;
             this.findAndReplacePopup.Visible = false;
             this.findAndReplacePopup.WordToFind = "";
-            this.findAndReplacePopup.VisibleChanged += findAndReplacePopup_VisibleChanged;
+            this.findAndReplacePopup.VisibleChanged += new System.EventHandler(this.findAndReplacePopup_VisibleChanged);
             // 
-            // textBoxMainContextMenuStrip
-            // 
-            this.textBoxMainContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.undoContextMenuItem,
-            this.separatorContext1,
-            this.cutContextMenuItem,
-            this.copyContextMenuItem,
-            this.pasteContextMenuItem,
-            this.deleteContextMenuItem,
-            this.separatorContext2,
-            this.selectAllContextMenuItem,
-            this.separatorContext3,
-            this.checkDirContextMenuItem,
-            this.checkFolderPermissionsContextMenuItem});
-            this.textBoxMainContextMenuStrip.Name = "contextMenuStrip";
-            this.textBoxMainContextMenuStrip.Size = new System.Drawing.Size(210, 220);
-            this.textBoxMainContextMenuStrip.Opened += textBoxMainContexMenuStrip_Opened;
-            // 
-            // undoContextMenuItem
-            // 
-            this.undoContextMenuItem.Name = "undoContextMenuItem";
-            this.undoContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.undoContextMenuItem.Text = "Undo";
-            this.undoContextMenuItem.Click += undoContextMenuItem_Click;
-            // 
-            // separatorContext1
-            // 
-            this.separatorContext1.Name = "separatorContext1";
-            this.separatorContext1.Size = new System.Drawing.Size(206, 6);
-            // 
-            // cutContextMenuItem
-            // 
-            this.cutContextMenuItem.Name = "cutContextMenuItem";
-            this.cutContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.cutContextMenuItem.Text = "Cut";
-            this.cutContextMenuItem.Click += cutContextMenuItem_Click;
-            // 
-            // copyContextMenuItem
-            // 
-            this.copyContextMenuItem.Name = "copyContextMenuItem";
-            this.copyContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.copyContextMenuItem.Text = "Copy";
-            this.copyContextMenuItem.Click += copyContextMenuItem_Click;
-            // 
-            // pasteContextMenuItem
-            // 
-            this.pasteContextMenuItem.Name = "pasteContextMenuItem";
-            this.pasteContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.pasteContextMenuItem.Text = "Paste";
-            // 
-            // deleteContextMenuItem
-            // 
-            this.deleteContextMenuItem.Name = "deleteContextMenuItem";
-            this.deleteContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.deleteContextMenuItem.Text = "Delete";
-            this.deleteContextMenuItem.Click += deleteContextMenuItem_Click;
-            // 
-            // separatorContext2
-            // 
-            this.separatorContext2.Name = "separatorContext2";
-            this.separatorContext2.Size = new System.Drawing.Size(206, 6);
-            // 
-            // selectAllContextMenuItem
-            // 
-            this.selectAllContextMenuItem.Name = "selectAllContextMenuItem";
-            this.selectAllContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.selectAllContextMenuItem.Text = "Select All";
-            this.selectAllContextMenuItem.Click += selectAllContextMenuItem_Click;
-            // 
-            // separatorContext3
-            // 
-            this.separatorContext3.Name = "separatorContext3";
-            this.separatorContext3.Size = new System.Drawing.Size(206, 6);
-            // 
-            // checkDirContextMenuItem
-            // 
-            this.checkDirContextMenuItem.Name = "checkDirContextMenuItem";
-            this.checkDirContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.checkDirContextMenuItem.Text = "Check Directory";
-            this.checkDirContextMenuItem.Click += checkDirectoryContextMenuItem_Click;
-            // 
-            // checkFolderPermissionsContextMenuItem
-            // 
-            this.checkFolderPermissionsContextMenuItem.Name = "checkFolderPermissionsContextMenuItem";
-            this.checkFolderPermissionsContextMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.checkFolderPermissionsContextMenuItem.Text = "Check Folder Permissions";
-            this.checkFolderPermissionsContextMenuItem.Click += new System.EventHandler(this.checkFolderPermissionsContextMenuItem_Click);
-            // 
-            // MainForm
+            // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -622,12 +634,12 @@ namespace Notepad_Z
             this.KeyPreview = true;
             this.MainMenuStrip = this.mainMenuStrip;
             this.MinimumSize = new System.Drawing.Size(340, 350);
-            this.Name = "MainForm";
+            this.Name = "mainForm";
             this.Text = "Notepad Z";
-            Activated += MainForm_Activated;
-            FormClosing += MainForm_FormClosing;
-            Load += mainForm_Load;
-            Resize += MainForm_Resize;
+            this.Activated += new System.EventHandler(this.MainForm_Activated);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.mainForm_Load);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -696,8 +708,9 @@ namespace Notepad_Z
         private ToolStripMenuItem undoToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripSeparator separatorContext3;
-        private ToolStripMenuItem checkDirContextMenuItem;
+        private ToolStripMenuItem checkFolderPathContextMenuItem;
         private ToolStripMenuItem checkFolderPermissionsContextMenuItem;
+        private ToolStripMenuItem checkPathAndPermissionsContextMenuItem;
     }
 }
 

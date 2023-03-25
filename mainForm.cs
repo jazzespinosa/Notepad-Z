@@ -10,15 +10,14 @@ using System.Text.RegularExpressions;
 using Timer = System.Timers.Timer;
 using System.Windows.Forms;
 using System.Timers;
+using IronXL;
 
 namespace Notepad_Z
 {
     public partial class mainForm : Form
     {
         String path = String.Empty;
-
         private static Dictionary<string, string> templateAppCodePair = new Dictionary<string, string>();
-        private static List<string> templateList = new List<string>();
         private static Dictionary<string, string> templateAppNamePair = new Dictionary<string, string>();
         private static Timer timer;
         DateTime dateTimeSaved;
@@ -30,8 +29,8 @@ namespace Notepad_Z
         private string LineBreak { get; set; }
         private bool IsTextChange { get; set; }
         private string TextBeforeChange { get; set; }
-
         private bool IsBackedUp { get; set; } = false;
+
         public mainForm()
         {
             InitializeComponent();
@@ -50,20 +49,20 @@ namespace Notepad_Z
                     saveToolStripMenuItem_Click(sender, e);
                     textBoxMain.Text = String.Empty;
                     path = String.Empty;
-                    this.Text = "Untitled - Process Notepad";
+                    this.Text = "Untitled - Notepad Z";
                 }
                 else if (DialogResult == DialogResult.No)
                 {
                     textBoxMain.Text = String.Empty;
                     path = String.Empty;
-                    this.Text = "Untitled - Process Notepad";
+                    this.Text = "Untitled - Notepad Z";
                 }
             }
             else
             {
                 textBoxMain.Text = String.Empty;
                 path = String.Empty;
-                this.Text = "Untitled - Process Notepad";
+                this.Text = "Untitled - Notepad Z";
             }
         }
 
@@ -71,7 +70,7 @@ namespace Notepad_Z
         {
             string initialPath = Environment.CurrentDirectory;
             ProcessStartInfo newProcess = new ProcessStartInfo();
-            newProcess.FileName = initialPath + @"\Process Notepad.exe";
+            newProcess.FileName = initialPath + @"\Notepad Z.exe";
             Process.Start(newProcess);
         }
 
@@ -148,7 +147,7 @@ namespace Notepad_Z
             if (IsTextChange == true)
             {
                 DialogResult = MessageBox.Show("Do you want to save current file?",
-                "Process Notepad",
+                "Notepad Z",
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Question,
                 MessageBoxDefaultButton.Button2);
@@ -344,14 +343,8 @@ namespace Notepad_Z
         // PREFERENCES MENU
         private void enableTemplateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (enableTemplateToolStripMenuItem.Checked == true)
-            {
-                enableTemplateToolStripMenuItem.Checked = false;
-            }
-            else
-            {
-                enableTemplateToolStripMenuItem.Checked = true;
-            }
+            if (enableTemplateToolStripMenuItem.Checked == true) enableTemplateToolStripMenuItem.Checked = false;
+            else enableTemplateToolStripMenuItem.Checked = true;
 
             Settings.Default.enableTemplate = enableTemplateToolStripMenuItem.Checked;
             Settings.Default.Save();
@@ -359,14 +352,8 @@ namespace Notepad_Z
 
         private void enableLineBreakToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (enableLineBreakToolStripMenuItem.Checked == true)
-            {
-                enableLineBreakToolStripMenuItem.Checked = false;
-            }
-            else
-            {
-                enableLineBreakToolStripMenuItem.Checked = true;
-            }
+            if (enableLineBreakToolStripMenuItem.Checked == true) enableLineBreakToolStripMenuItem.Checked = false;
+            else enableLineBreakToolStripMenuItem.Checked = true;
 
             Settings.Default.enableLineBreak = enableLineBreakToolStripMenuItem.Checked;
             Settings.Default.Save();
@@ -376,7 +363,7 @@ namespace Notepad_Z
         // MAIN FORM EVENTS
         private void mainForm_Load(object sender, EventArgs e)
         {
-            this.Text = "Untitled - Process Notepad";
+            this.Text = "Untitled - Notepad Z";
 
             templateToolStripComboBox.Visible = Settings.Default.enableTemplate;
             enableTemplateToolStripMenuItem.Checked = Settings.Default.enableTemplate;
@@ -592,27 +579,16 @@ namespace Notepad_Z
             string lastChars = "";
             string stringAfterNewline = "";
 
-            if (caretPosition <= 15)
-            {
-                lastChars = textBoxMain.Text.Substring(0, caretPosition);
-            }
-            else
-            {
-                lastChars = textBoxMain.Text.Substring(caretPosition - 15, 15);
-            }
+            if (caretPosition <= 15) lastChars = textBoxMain.Text.Substring(0, caretPosition);
+            else lastChars = textBoxMain.Text.Substring(caretPosition - 15, 15);
 
             int pos = lastChars.LastIndexOf("\r\n");
-            if (pos >= 0)
-            {
-                stringAfterNewline = lastChars.Substring(pos + 2);
-            }
-            else
-            {
-                stringAfterNewline = lastChars;
-            }
+
+            if (pos >= 0) stringAfterNewline = lastChars.Substring(pos + 2);
+            else stringAfterNewline = lastChars;
+
             string[] stringsInSpace = stringAfterNewline.Split(' ');
             string lastString = stringsInSpace.LastOrDefault();
-
 
             int stringCount = lastString.Length;
             DisplayTemplate(templateAppCodePair, lastString, stringCount, "");
@@ -621,10 +597,10 @@ namespace Notepad_Z
         private void LoadTemplateFromComboBox()
         {
             string templateTitle = templateToolStripComboBox.Text;
-            DisplayTemplate(templateAppNamePair, templateTitle, 0, "\r\n\r\n");
+            DisplayTemplate(templateAppNamePair, templateTitle, 0, "\r\n");
         }
 
-        private void DisplayTemplate(Dictionary<string, string> dict, string keyInput, int stringCount, string ifNewline)
+        private void DisplayTemplate(Dictionary<string, string> dict, string keyInput, int stringCount, string newLine)
         {
             int caretPosition = textBoxMain.SelectionStart;
             if (dict.ContainsKey(keyInput))
@@ -633,7 +609,7 @@ namespace Notepad_Z
 
                 textBoxMain.SelectionStart = caretPosition - stringCount;
                 textBoxMain.SelectionLength = stringCount;
-                textBoxMain.Paste(template + ifNewline);
+                textBoxMain.Paste(template + newLine);
 
                 textBoxMain.Focus();
             }
@@ -646,7 +622,7 @@ namespace Notepad_Z
             string lineBreakFilePath = initialPath + @"\config\linebreak.txt";
             string configFolder = initialPath + @"\config";
 
-            if (!Directory.Exists(configFolder))
+            if (Directory.Exists(configFolder) == false)
             {
                 MessageBox.Show("Config folder does not exist.");
                 lineBreakToolStripMenuItem.Enabled = false;
@@ -662,8 +638,14 @@ namespace Notepad_Z
                             toolStripLabel.Enabled = false;
                     }
                 }
+
+                Settings.Default.enableTemplate = false;
+                Settings.Default.enableLineBreak = false;
+                Settings.Default.Save();
+
                 return;
             }
+
             if (File.Exists(templateFilePath))
             {
                 LoadTemplatesAtStart(templateFilePath);
@@ -673,11 +655,16 @@ namespace Notepad_Z
                 if (templateToolStripComboBox.Visible == true)
                 {
                     MessageBox.Show("Templates file does not exist.");
+
+                    Settings.Default.enableTemplate = false;
+                    Settings.Default.Save();
                 }
             }
-            if ((File.Exists(lineBreakFilePath)))
+            if (File.Exists(lineBreakFilePath) == true) LoadLineBreakAtStart(lineBreakFilePath);
+            else
             {
-                LoadLineBreakAtStart(lineBreakFilePath);
+                Settings.Default.enableLineBreak = false;
+                Settings.Default.Save();
             }
         }
 
@@ -697,12 +684,11 @@ namespace Notepad_Z
                     templateText = templateText.Replace("\n", "\r\n"); //RTB uses \n only
 
                     if (templateCode != "")
-                    {
                         templateAppCodePair.Add(templateCode, templateText);
-                    }
+
                     if (templateTitle != "")
                     {
-                        templateList.Add(templateTitle);
+                        templateToolStripComboBox.Items.Add(templateTitle);
                         templateAppNamePair.Add(templateTitle, templateText);
                     }
                 }
@@ -711,11 +697,6 @@ namespace Notepad_Z
             {
                 MessageBox.Show(ex.Message);
                 //throw;
-            }
-
-            foreach (string item in templateList)
-            {
-                templateToolStripComboBox.Items.Add(item);
             }
         }
 
@@ -881,7 +862,7 @@ namespace Notepad_Z
 
             if (index == -1)
             {
-                MessageBox.Show($"Cannot find \"{wordToFind}\".", "Process Notepad");
+                MessageBox.Show($"Cannot find \"{wordToFind}\".", "Notepad Z");
                 textBoxMain.Focus();
                 return;
             }
@@ -947,14 +928,14 @@ namespace Notepad_Z
                 cutContextMenuItem.Enabled = true;
                 copyContextMenuItem.Enabled = true;
                 deleteContextMenuItem.Enabled = true;
-                checkDirContextMenuItem.Enabled = true;
+                checkFolderPathContextMenuItem.Enabled = true;
             }
             else
             {
                 cutContextMenuItem.Enabled = false;
                 copyContextMenuItem.Enabled = false;
                 deleteContextMenuItem.Enabled = false;
-                checkDirContextMenuItem.Enabled = false;
+                checkFolderPathContextMenuItem.Enabled = false;
             }
 
             if (textBoxMain.SelectionLength == textBoxMain.Text.Length) selectAllContextMenuItem.Enabled = false;
@@ -973,44 +954,86 @@ namespace Notepad_Z
 
         private void selectAllContextMenuItem_Click(object sender, EventArgs e) => textBoxMain.SelectAll();
 
-        private void checkDirectoryContextMenuItem_Click(object sender, EventArgs e)
+        private void checkFolderPathContextMenuItem_Click(object sender, EventArgs e)
         {
             string selectedText = textBoxMain.SelectedText.Trim();
-            try
+            if (CheckIfDirectoryExists(selectedText) == true)
             {
-                if (Directory.Exists(selectedText))
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo
-                    {
-                        Arguments = selectedText,
-                        FileName = "explorer.exe"
-                    };
-                    Process.Start(startInfo);
-                }
-                else
-                {
-                    MessageBox.Show($"Path \"{selectedText}\" does not exist", "Error");
-                    return;
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
+                OpenSelectedFolderPath(selectedText);
             }
         }
 
         private void checkFolderPermissionsContextMenuItem_Click(object sender, EventArgs e)
         {
             string selectedText = textBoxMain.SelectedText.Trim();
-            string initialPath = Environment.CurrentDirectory;
-            ProcessStartInfo newProcess = new ProcessStartInfo
-            {
-                Arguments = selectedText,
-                FileName = initialPath + @"\Fil-Group-Lister.exe"
-            };
+            string appDirectory = Environment.CurrentDirectory + @"\Fil-Group-Lister.exe";
 
-            if (File.Exists(newProcess.FileName) == true) Process.Start(newProcess);
+            if (CheckIfDirectoryExists(selectedText) == true)
+            {
+                OpenFileGroupLister(selectedText, appDirectory);
+            }
+        }
+
+        private void checkPathAndPermissionsContextMenuItem_Click(object sender, EventArgs e)
+        {
+            string selectedText = textBoxMain.SelectedText.Trim();
+            string appDirectory = Environment.CurrentDirectory + @"\Fil-Group-Lister.exe";
+            if (CheckIfDirectoryExists(selectedText) == true)
+            {
+                OpenSelectedFolderPath(selectedText);
+                OpenFileGroupLister(selectedText, appDirectory);
+            }
+        }
+
+        private bool CheckIfDirectoryExists(string selectedText)
+        {
+            bool output;
+            if (Directory.Exists(selectedText) == false)
+            {
+                MessageBox.Show($"Path \"{selectedText}\" does not exist", "Error");
+                output = false;
+            }
+            else output = true;
+            return output;
+        }
+
+        private void OpenSelectedFolderPath(string selectedText)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = selectedText,
+                    FileName = "explorer.exe"
+                };
+                Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
+            }
+        }
+
+        private void OpenFileGroupLister(string selectedText, string appDirectory)
+        {
+            if (File.Exists(appDirectory) == true)
+            {
+                try
+                {
+                    ProcessStartInfo newProcess = new ProcessStartInfo
+                    {
+                        Arguments = selectedText,
+                        FileName = appDirectory
+                    };
+                    Process.Start(newProcess);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
+            }
             else MessageBox.Show("Application Fil Group Lister missing", "Error");
         }
 
