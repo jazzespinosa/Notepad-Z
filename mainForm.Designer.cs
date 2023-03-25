@@ -167,7 +167,6 @@ namespace Notepad_Z
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As...";
-            this.saveAsToolStripMenuItem.Click += saveAsToolStripMenuItem_Click;
             // 
             // toolStripMenuItem2
             // 
@@ -345,7 +344,6 @@ namespace Notepad_Z
             this.templateToolStripComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.templateToolStripComboBox.Name = "templateToolStripComboBox";
             this.templateToolStripComboBox.Size = new System.Drawing.Size(140, 23);
-            this.templateToolStripComboBox.SelectedIndexChanged += templateToolStripComboBox_SelectedIndexChanged;
             // 
             // lineBreakToolStripMenuItem
             // 
@@ -570,7 +568,6 @@ namespace Notepad_Z
             this.pasteContextMenuItem.Name = "pasteContextMenuItem";
             this.pasteContextMenuItem.Size = new System.Drawing.Size(209, 22);
             this.pasteContextMenuItem.Text = "Paste";
-            this.pasteContextMenuItem.Click += pasteContextMenuItem_Click;
             // 
             // deleteContextMenuItem
             // 
