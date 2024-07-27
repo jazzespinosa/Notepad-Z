@@ -516,84 +516,85 @@ namespace Notepad_Z
             this.checkFolderPermissionsContextMenuItem,
             this.checkPathAndPermissionsContextMenuItem});
             this.textBoxMainContextMenuStrip.Name = "contextMenuStrip";
-            this.textBoxMainContextMenuStrip.Size = new System.Drawing.Size(224, 242);
+            this.textBoxMainContextMenuStrip.ShowImageMargin = false;
+            this.textBoxMainContextMenuStrip.Size = new System.Drawing.Size(199, 220);
             this.textBoxMainContextMenuStrip.Opened += new System.EventHandler(this.textBoxMainContexMenuStrip_Opened);
             // 
             // undoContextMenuItem
             // 
             this.undoContextMenuItem.Name = "undoContextMenuItem";
-            this.undoContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.undoContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.undoContextMenuItem.Text = "Undo";
             this.undoContextMenuItem.Click += new System.EventHandler(this.undoContextMenuItem_Click);
             // 
             // separatorContext1
             // 
             this.separatorContext1.Name = "separatorContext1";
-            this.separatorContext1.Size = new System.Drawing.Size(220, 6);
+            this.separatorContext1.Size = new System.Drawing.Size(195, 6);
             // 
             // cutContextMenuItem
             // 
             this.cutContextMenuItem.Name = "cutContextMenuItem";
-            this.cutContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.cutContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.cutContextMenuItem.Text = "Cut";
             this.cutContextMenuItem.Click += new System.EventHandler(this.cutContextMenuItem_Click);
             // 
             // copyContextMenuItem
             // 
             this.copyContextMenuItem.Name = "copyContextMenuItem";
-            this.copyContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.copyContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.copyContextMenuItem.Text = "Copy";
             this.copyContextMenuItem.Click += new System.EventHandler(this.copyContextMenuItem_Click);
             // 
             // pasteContextMenuItem
             // 
             this.pasteContextMenuItem.Name = "pasteContextMenuItem";
-            this.pasteContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.pasteContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.pasteContextMenuItem.Text = "Paste";
             this.pasteContextMenuItem.Click += new System.EventHandler(this.pasteContextMenuItem_Click);
             // 
             // deleteContextMenuItem
             // 
             this.deleteContextMenuItem.Name = "deleteContextMenuItem";
-            this.deleteContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.deleteContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.deleteContextMenuItem.Text = "Delete";
             this.deleteContextMenuItem.Click += new System.EventHandler(this.deleteContextMenuItem_Click);
             // 
             // separatorContext2
             // 
             this.separatorContext2.Name = "separatorContext2";
-            this.separatorContext2.Size = new System.Drawing.Size(220, 6);
+            this.separatorContext2.Size = new System.Drawing.Size(195, 6);
             // 
             // selectAllContextMenuItem
             // 
             this.selectAllContextMenuItem.Name = "selectAllContextMenuItem";
-            this.selectAllContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.selectAllContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.selectAllContextMenuItem.Text = "Select All";
             this.selectAllContextMenuItem.Click += new System.EventHandler(this.selectAllContextMenuItem_Click);
             // 
             // separatorContext3
             // 
             this.separatorContext3.Name = "separatorContext3";
-            this.separatorContext3.Size = new System.Drawing.Size(220, 6);
+            this.separatorContext3.Size = new System.Drawing.Size(195, 6);
             // 
             // checkFolderPathContextMenuItem
             // 
             this.checkFolderPathContextMenuItem.Name = "checkFolderPathContextMenuItem";
-            this.checkFolderPathContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.checkFolderPathContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.checkFolderPathContextMenuItem.Text = "Check Folder Path";
             this.checkFolderPathContextMenuItem.Click += new System.EventHandler(this.checkFolderPathContextMenuItem_Click);
             // 
             // checkFolderPermissionsContextMenuItem
             // 
             this.checkFolderPermissionsContextMenuItem.Name = "checkFolderPermissionsContextMenuItem";
-            this.checkFolderPermissionsContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.checkFolderPermissionsContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.checkFolderPermissionsContextMenuItem.Text = "Check Folder Permissions";
             this.checkFolderPermissionsContextMenuItem.Click += new System.EventHandler(this.checkFolderPermissionsContextMenuItem_Click);
             // 
             // checkPathAndPermissionsContextMenuItem
             // 
             this.checkPathAndPermissionsContextMenuItem.Name = "checkPathAndPermissionsContextMenuItem";
-            this.checkPathAndPermissionsContextMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.checkPathAndPermissionsContextMenuItem.Size = new System.Drawing.Size(198, 22);
             this.checkPathAndPermissionsContextMenuItem.Text = "Check Path and Permissions";
             this.checkPathAndPermissionsContextMenuItem.Click += new System.EventHandler(this.checkPathAndPermissionsContextMenuItem_Click);
             // 

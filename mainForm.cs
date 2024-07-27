@@ -10,7 +10,8 @@ using System.Text.RegularExpressions;
 using Timer = System.Timers.Timer;
 using System.Windows.Forms;
 using System.Timers;
-using IronXL;
+using OfficeOpenXml;
+using System.Text;
 
 namespace Notepad_Z
 {
@@ -670,26 +671,34 @@ namespace Notepad_Z
 
         private void LoadTemplatesAtStart(string templateFilePath)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
             try
             {
-                WorkBook workBook = WorkBook.Load(templateFilePath);
-                WorkSheet workSheet = workBook.GetWorkSheet("Sheet1");
-
-                for (int i = 1; i < 100; i++)
+                using (ExcelPackage package = new ExcelPackage(templateFilePath))
                 {
-                    var range = workSheet[$"A{i}:C{i}"].ToList();
-                    string templateTitle = (string)range[0].Value;
-                    string templateText = (string)range[1].Value;
-                    string templateCode = (string)range[2].Value;
-                    templateText = templateText.Replace("\n", "\r\n"); //RTB uses \n only
+                    ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                    int totalRows = workSheet.Dimension.End.Row;
 
-                    if (templateCode != "")
-                        templateAppCodePair.Add(templateCode, templateText);
+                    int colTemplateTitle = 1;
+                    int colTemplateText = 2;
+                    int colTemplateCode = 3;
 
-                    if (templateTitle != "")
+                    for (int i = 1; i <= totalRows; i++)
                     {
-                        templateToolStripComboBox.Items.Add(templateTitle);
-                        templateAppNamePair.Add(templateTitle, templateText);
+                        string templateTitle = workSheet.Cells[i, colTemplateTitle].Value.ToString();
+                        string templateText = workSheet.Cells[i, colTemplateText].Value.ToString();
+                        string templateCode = workSheet.Cells[i, colTemplateCode].Value.ToString();
+                        templateText = templateText.Replace("\n", "\r\n");
+
+                        if (templateCode != "")
+                            templateAppCodePair.Add(templateCode, templateText);
+
+                        if (templateTitle != "")
+                        {
+                            templateToolStripComboBox.Items.Add(templateTitle);
+                            templateAppNamePair.Add(templateTitle, templateText);
+                        }
                     }
                 }
             }
@@ -1051,7 +1060,6 @@ namespace Notepad_Z
         // TRIAL
 
         // adding email???
-        // adding right click check directory
 
     }
 }
