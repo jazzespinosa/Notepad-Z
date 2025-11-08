@@ -133,12 +133,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="asd.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="asd.Designer.cs">
-      <DependentUpon>asd.cs</DependentUpon>
-    </Compile>
     <Compile Include="mainForm.cs">
       <SubType>Form</SubType>
     </Compile>

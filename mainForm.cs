@@ -1,4 +1,5 @@
 ﻿using Notepad_Z.Properties;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,20 +7,19 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Timer = System.Timers.Timer;
-using System.Windows.Forms;
-using System.Timers;
-using OfficeOpenXml;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Timers;
+using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace Notepad_Z
 {
     public partial class mainForm : Form
     {
         String path = String.Empty;
-        private static Dictionary<string, string> templateAppCodePair = new Dictionary<string, string>();
-        private static Dictionary<string, string> templateAppNamePair = new Dictionary<string, string>();
+        private static Dictionary<string, string> templateAppCodePair = new Dictionary<string, string>(); //gets template text and application code
+        private static Dictionary<string, string> templateAppNamePair = new Dictionary<string, string>(); //gets template text and application name
         private static Timer timer;
         DateTime dateTimeSaved;
         private bool mSubscribed;
@@ -1046,20 +1046,6 @@ namespace Notepad_Z
             else MessageBox.Show("Application Fil Group Lister missing", "Error");
         }
 
-
-
-
-
-
-
-
-
-
-
-
-        // TRIAL
-
-        // adding email???
 
     }
 }
