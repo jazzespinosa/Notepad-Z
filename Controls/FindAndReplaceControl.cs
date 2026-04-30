@@ -8,7 +8,7 @@ namespace Notepad_Z
 {
     public partial class FindAndReplaceControl : UserControl
     {
-        public mainForm mainForm { get; set; }
+        public MainForm mainForm { get; set; }
         ReplaceControl replaceControl = new ReplaceControl();
         public string WordToFind
         {

@@ -1,387 +1,49 @@
-﻿using Notepad_Z.Properties;
-using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Timers;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Timer = System.Timers.Timer;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Notepad_Z
 {
-    public partial class mainForm : Form
+    public partial class MainForm : Form
     {
-        String path = String.Empty;
-        private static Dictionary<string, string> templateAppCodePair = new Dictionary<string, string>(); //gets template text and application code
-        private static Dictionary<string, string> templateAppNamePair = new Dictionary<string, string>(); //gets template text and application name
-        private static Timer timer;
-        DateTime dateTimeSaved;
+        private String path = String.Empty;
+        private static Dictionary<string, string> templateAppCodePair =
+            new Dictionary<string, string>(); //gets template text and application code
+        private static Dictionary<string, string> templateAppNamePair =
+            new Dictionary<string, string>(); //gets template text and application name
+        private DateTime dateTimeSaved;
         private bool mSubscribed;
+        private Timer backupTimer;
         private float ZoomMultiplier { get; set; } = 1;
         private Font TextFont { get; set; }
         private float TextFontSize { get; set; }
         private FontStyle TextFontStyle { get; set; }
         private string LineBreak { get; set; }
-        private bool IsTextChange { get; set; }
+        private bool IsDirty { get; set; }
         private string TextBeforeChange { get; set; }
         private bool IsBackedUp { get; set; } = false;
+        private string lastBackupContent = null; // store last backed up content to avoid redundant backups
 
-        public mainForm()
+        public MainForm()
         {
             InitializeComponent();
             findAndReplacePopup.mainForm = this;
         }
 
-        // FILE MENU
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (IsTextChange == true)
-            {
-                exitPrompt();
-
-                if (DialogResult == DialogResult.Yes)
-                {
-                    saveToolStripMenuItem_Click(sender, e);
-                    textBoxMain.Text = String.Empty;
-                    path = String.Empty;
-                    this.Text = "Untitled - Notepad Z";
-                }
-                else if (DialogResult == DialogResult.No)
-                {
-                    textBoxMain.Text = String.Empty;
-                    path = String.Empty;
-                    this.Text = "Untitled - Notepad Z";
-                }
-            }
-            else
-            {
-                textBoxMain.Text = String.Empty;
-                path = String.Empty;
-                this.Text = "Untitled - Notepad Z";
-            }
-        }
-
-        private void newWindowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string initialPath = Environment.CurrentDirectory;
-            ProcessStartInfo newProcess = new ProcessStartInfo();
-            newProcess.FileName = initialPath + @"\Notepad Z.exe";
-            Process.Start(newProcess);
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (IsTextChange == true)
-            {
-                exitPrompt();
-
-                if (DialogResult == DialogResult.Yes)
-                {
-                    saveToolStripMenuItem_Click(sender, e);
-                }
-                else if (DialogResult == DialogResult.No)
-                {
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (mainOpenFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                textBoxMain.Text = String.Empty;
-                textBoxMain.Text = File.ReadAllText(path = mainOpenFileDialog.FileName);
-
-                this.Text = mainOpenFileDialog.FileName.Substring(mainOpenFileDialog.FileName.LastIndexOf('\\') + 1);
-
-                IsTextChange = false;
-                TextBeforeChange = textBoxMain.Text;
-            }
-
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (mainSaveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                File.WriteAllText(path = mainSaveFileDialog.FileName, textBoxMain.Text);
-
-                string newFile = mainSaveFileDialog.FileName;
-                this.Text = newFile.Substring(newFile.LastIndexOf('\\') + 1);
-
-                IsTextChange = false;
-                TextBeforeChange = textBoxMain.Text;
-
-                saveBackUp();
-            }
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrWhiteSpace(path))
-            {
-                File.WriteAllText(path, textBoxMain.Text);
-
-                this.Text = path.Substring(path.LastIndexOf('\\') + 1);
-
-                IsTextChange = false;
-                TextBeforeChange = textBoxMain.Text;
-
-                saveBackUp();
-            }
-            else
-            {
-                saveAsToolStripMenuItem_Click(sender, e);
-            }
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
-
-        private void exitPrompt()
-        {
-            if (IsTextChange == true)
-            {
-                DialogResult = MessageBox.Show("Do you want to save current file?",
-                "Notepad Z",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2);
-            }
-        }
-
-
-        // EDIT MENU
-        private void editToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Clipboard.GetText(TextDataFormat.Text) == "") pasteToolStripMenuItem.Enabled = false;
-            else pasteToolStripMenuItem.Enabled = true;
-
-            if (textBoxMain.SelectionLength > 0)
-            {
-                cutToolStripMenuItem.Enabled = true;
-                copyToolStripMenuItem.Enabled = true;
-                deleteToolStripMenuItem.Enabled = true;
-            }
-            else
-            {
-                cutToolStripMenuItem.Enabled = false;
-                copyToolStripMenuItem.Enabled = false;
-                deleteToolStripMenuItem.Enabled = false;
-            }
-
-            if (textBoxMain.SelectionLength == textBoxMain.Text.Length) selectAllToolStripMenuItem.Enabled = false;
-            else selectAllToolStripMenuItem.Enabled = true;
-        }
-
-        private void undoToolStripMenuItem_Click(object sender, EventArgs e) => textBoxMain.Undo();
-
-        private void cutToolStripMenuItem_Click(object sender, EventArgs e) => textBoxMain.Cut();
-
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e) => textBoxMain.Copy();
-
-        private void pasteToolStripMenuItem_Click(object sender, EventArgs e) => textBoxMain.Paste();
-
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e) => textBoxMain.SelectedText = String.Empty;
-
-        private void findToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFindAndReplaceControl(false);
-        }
-
-        private void replaceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFindAndReplaceControl(true);
-        }
-
-        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e) => textBoxMain.SelectAll();
-
-        private void OpenFindAndReplaceControl(bool isFindAndReplace)
-        {
-            findAndReplacePopup.toggleExpandCollapse.Checked = isFindAndReplace;
-            findAndReplacePopup.Visible = true;
-
-            findAndReplacePopup.Focus();
-        }
-
-
-        // VIEW MENU
-        private void wordWrapToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (wordWrapToolStripMenuItem.Checked == true)
-            {
-                textBoxMain.WordWrap = false;
-                textBoxMain.ScrollBars = ScrollBars.Both;
-                wordWrapToolStripMenuItem.Checked = false;
-                wordWrapStripStatusLabel.Text = "WW: OFF";
-            }
-            else
-            {
-                textBoxMain.WordWrap = true;
-                textBoxMain.ScrollBars = ScrollBars.Vertical;
-                wordWrapToolStripMenuItem.Checked = true;
-                wordWrapStripStatusLabel.Text = "WW: ON";
-            }
-        }
-
-        private void statusBarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (statusBarToolStripMenuItem.Checked == true)
-            {
-                statusStrip.Visible = false;
-                statusBarToolStripMenuItem.Checked = false;
-            }
-            else
-            {
-                statusStrip.Visible = true;
-                statusBarToolStripMenuItem.Checked = true;
-            }
-        }
-
-        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            mainFontDialog.Font = TextFont;
-
-            if (mainFontDialog.ShowDialog() == DialogResult.OK)
-            {
-                //textBoxMain.Font = new Font(mainFontDialog.Font, mainFontDialog.Font.Style);
-                textBoxMain.ForeColor = mainFontDialog.Color;
-
-                TextFont = mainFontDialog.Font;
-                TextFontSize = mainFontDialog.Font.Size;
-                TextFontStyle = mainFontDialog.Font.Style;
-
-                UpdateFontAndZoomContent();
-            }
-        }
-
-        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ZoomMultiplier += (float)0.1;
-            validateZoom();
-            UpdateFontAndZoomContent();
-            UpdateZoomStatusLabel();
-        }
-
-        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ZoomMultiplier -= (float)0.1;
-            validateZoom();
-            UpdateFontAndZoomContent();
-            UpdateZoomStatusLabel();
-        }
-
-        private void resetZoomToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ZoomMultiplier = 1;
-            UpdateFontAndZoomContent();
-            UpdateZoomStatusLabel();
-        }
-
-        private void Subscribe(bool enabled)
-        {
-            if (!enabled) textBoxMain.MouseWheel -= MyMouseWheel;
-            else if (!mSubscribed) textBoxMain.MouseWheel += MyMouseWheel;
-
-            mSubscribed = enabled;
-        }
-
-        private void MyMouseWheel(object sender, MouseEventArgs e)
-        {
-            int mousedeltaval = e.Delta / 120;
-            float x = (float)mousedeltaval / 10;
-            ZoomMultiplier += x;
-
-            validateZoom();
-            UpdateFontAndZoomContent();
-            UpdateZoomStatusLabel();
-        }
-
-        private void validateZoom()
-        {
-            if (ZoomMultiplier <= 0.1)
-            {
-                ZoomMultiplier = (float)0.1;
-            }
-            else if (ZoomMultiplier >= 5)
-            {
-                ZoomMultiplier = (float)5;
-            }
-        }
-
-        private void UpdateZoomStatusLabel()
-        {
-            zoomStripStatusLabel.Text = $"{Math.Round(ZoomMultiplier * 100, 0, MidpointRounding.ToEven)} %";
-        }
-
-        private void UpdateFontAndZoomContent()
-        {
-            textBoxMain.Font = new Font(TextFont.FontFamily, (TextFontSize * ZoomMultiplier), TextFontStyle);
-        }
-
-
-        // TEMPLATES MENU
-        private void templateToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LoadTemplateFromComboBox();
-            templateToolStripComboBox.SelectedItem = null;
-        }
-
-        private void lineBreakToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(LineBreak))
-            {
-                textBoxMain.Paste(LineBreak);
-            }
-        }
-
-
-        // PREFERENCES MENU
-        private void enableTemplateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (enableTemplateToolStripMenuItem.Checked == true) enableTemplateToolStripMenuItem.Checked = false;
-            else enableTemplateToolStripMenuItem.Checked = true;
-
-            Settings.Default.enableTemplate = enableTemplateToolStripMenuItem.Checked;
-            Settings.Default.Save();
-        }
-
-        private void enableLineBreakToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (enableLineBreakToolStripMenuItem.Checked == true) enableLineBreakToolStripMenuItem.Checked = false;
-            else enableLineBreakToolStripMenuItem.Checked = true;
-
-            Settings.Default.enableLineBreak = enableLineBreakToolStripMenuItem.Checked;
-            Settings.Default.Save();
-        }
-
-
-        // MAIN FORM EVENTS
         private void mainForm_Load(object sender, EventArgs e)
         {
             this.Text = "Untitled - Notepad Z";
 
-            templateToolStripComboBox.Visible = Settings.Default.enableTemplate;
-            enableTemplateToolStripMenuItem.Checked = Settings.Default.enableTemplate;
+            LoadConfig(); // load initial config for templates and line breaks
 
-            lineBreakToolStripMenuItem.Visible = Settings.Default.enableLineBreak;
-            enableLineBreakToolStripMenuItem.Checked = Settings.Default.enableLineBreak;
-
-            if (templateToolStripComboBox.Visible == true)
-            {
-                mainMenuStrip.Items.Insert(3, new ToolStripLabel { Text = "Template", Name = "templateToolStripLabel" });
-            }
-
-            if (templateToolStripComboBox.Visible == true || lineBreakToolStripMenuItem.Visible == true)
-            {
-                LoadConfig();
-                mainMenuStrip.Items.Insert(3, new ToolStripSeparator { Name = "separatorToolStripItem", Margin = new Padding(0, 0, 5, 0) });
-            }
+            LoadPreferences();
 
             dateTimeSaved = DateTime.Now;
             TimerStart();
@@ -400,6 +62,9 @@ namespace Notepad_Z
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            backupTimer?.Stop();
+            backupTimer?.Dispose();
+
             if (!string.IsNullOrWhiteSpace(textBoxMain.Text))
             {
                 exitPrompt();
@@ -428,24 +93,32 @@ namespace Notepad_Z
             }
         }
 
-
         // TEXTBOX EVENTS
         private void textBoxMain_TextChanged(object sender, EventArgs e)
         {
-            IsTextChange = true;
+            // Use the editor text for state, not the form title.
+            IsDirty = textBoxMain.Text != TextBeforeChange;
 
-            if (this.Text[0] == '*' && textBoxMain.Text == TextBeforeChange)
-            {
-                this.Text = this.Text.Remove(0, 1);
-                IsTextChange = false;
-            }
-            else if (this.Text[0] != '*')
-            {
-                this.Text = $"*{this.Text}";
-                IsTextChange = true;
-            }
+            // Ensure the form title has a leading star when dirty.
+            if (!this.Text.StartsWith("*") && IsDirty)
+                this.Text = "*" + this.Text;
 
+            UpdateFormTitle(IsDirty);
             UpdateLineAndColumn();
+        }
+
+        private void UpdateFormTitle(bool dirty)
+        {
+            if (dirty)
+            {
+                if (!this.Text.StartsWith("*"))
+                    this.Text = "*" + this.Text;
+            }
+            else
+            {
+                if (this.Text.StartsWith("*"))
+                    this.Text = this.Text.Substring(1);
+            }
         }
 
         private void textBoxMain_KeyDown(object sender, KeyEventArgs e)
@@ -515,7 +188,7 @@ namespace Notepad_Z
                         e.SuppressKeyPress = true;
                         zoomOutToolStripMenuItem_Click(sender, e);
                         break;
-                    case Keys.D0:  // RESET ZOOM
+                    case Keys.D0: // RESET ZOOM
                     case Keys.NumPad0:
                         e.SuppressKeyPress = true;
                         resetZoomToolStripMenuItem_Click(sender, e);
@@ -525,6 +198,13 @@ namespace Notepad_Z
                         break;
                     case Keys.Right:
                         e.SuppressKeyPress = false;
+                        break;
+                    case Keys.Back:
+                        e.SuppressKeyPress = true;
+                        if (textBoxMain.SelectionStart > 0)
+                        {
+                            SendKeys.Send("+{LEFT}{DEL}");
+                        }
                         break;
                     case Keys.Delete:
                         e.SuppressKeyPress = false;
@@ -572,300 +252,232 @@ namespace Notepad_Z
             UpdateLineAndColumn();
         }
 
-
-        // TEMPLATES METHODS
-        private void LoadTemplateFromSnippet()
-        {
-            int caretPosition = textBoxMain.SelectionStart;
-            string lastChars = "";
-            string stringAfterNewline = "";
-
-            if (caretPosition <= 15) lastChars = textBoxMain.Text.Substring(0, caretPosition);
-            else lastChars = textBoxMain.Text.Substring(caretPosition - 15, 15);
-
-            int pos = lastChars.LastIndexOf("\r\n");
-
-            if (pos >= 0) stringAfterNewline = lastChars.Substring(pos + 2);
-            else stringAfterNewline = lastChars;
-
-            string[] stringsInSpace = stringAfterNewline.Split(' ');
-            string lastString = stringsInSpace.LastOrDefault();
-
-            int stringCount = lastString.Length;
-            DisplayTemplate(templateAppCodePair, lastString, stringCount, "");
-        }
-
-        private void LoadTemplateFromComboBox()
-        {
-            string templateTitle = templateToolStripComboBox.Text;
-            DisplayTemplate(templateAppNamePair, templateTitle, 0, "\r\n");
-        }
-
-        private void DisplayTemplate(Dictionary<string, string> dict, string keyInput, int stringCount, string newLine)
-        {
-            int caretPosition = textBoxMain.SelectionStart;
-            if (dict.ContainsKey(keyInput))
-            {
-                string template = dict[keyInput];
-
-                textBoxMain.SelectionStart = caretPosition - stringCount;
-                textBoxMain.SelectionLength = stringCount;
-                textBoxMain.Paste(template + newLine);
-
-                textBoxMain.Focus();
-            }
-        }
-
-        private void LoadConfig()
-        {
-            string initialPath = Environment.CurrentDirectory;
-            string templateFilePath = initialPath + @"\config\templates.xlsx";
-            string lineBreakFilePath = initialPath + @"\config\linebreak.txt";
-            string configFolder = initialPath + @"\config";
-
-            if (Directory.Exists(configFolder) == false)
-            {
-                MessageBox.Show("Config folder does not exist.");
-                lineBreakToolStripMenuItem.Enabled = false;
-                templateToolStripComboBox.Enabled = false;
-
-                foreach (var item in mainMenuStrip.Items)
-                {
-                    if (item is ToolStripLabel)
-                    {
-                        ToolStripLabel toolStripLabel = (ToolStripLabel)item;
-
-                        if (toolStripLabel.Name.Equals("templateToolStripLabel"))
-                            toolStripLabel.Enabled = false;
-                    }
-                }
-
-                Settings.Default.enableTemplate = false;
-                Settings.Default.enableLineBreak = false;
-                Settings.Default.Save();
-
-                return;
-            }
-
-            if (File.Exists(templateFilePath))
-            {
-                LoadTemplatesAtStart(templateFilePath);
-            }
-            else
-            {
-                if (templateToolStripComboBox.Visible == true)
-                {
-                    MessageBox.Show("Templates file does not exist.");
-
-                    Settings.Default.enableTemplate = false;
-                    Settings.Default.Save();
-                }
-            }
-            if (File.Exists(lineBreakFilePath) == true) LoadLineBreakAtStart(lineBreakFilePath);
-            else
-            {
-                Settings.Default.enableLineBreak = false;
-                Settings.Default.Save();
-            }
-        }
-
-        private void LoadTemplatesAtStart(string templateFilePath)
-        {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-            try
-            {
-                using (ExcelPackage package = new ExcelPackage(templateFilePath))
-                {
-                    ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                    int totalRows = workSheet.Dimension.End.Row;
-
-                    int colTemplateTitle = 1;
-                    int colTemplateText = 2;
-                    int colTemplateCode = 3;
-
-                    for (int i = 1; i <= totalRows; i++)
-                    {
-                        string templateTitle = workSheet.Cells[i, colTemplateTitle].Value.ToString();
-                        string templateText = workSheet.Cells[i, colTemplateText].Value.ToString();
-                        string templateCode = workSheet.Cells[i, colTemplateCode].Value.ToString();
-                        templateText = templateText.Replace("\n", "\r\n");
-
-                        if (templateCode != "")
-                            templateAppCodePair.Add(templateCode, templateText);
-
-                        if (templateTitle != "")
-                        {
-                            templateToolStripComboBox.Items.Add(templateTitle);
-                            templateAppNamePair.Add(templateTitle, templateText);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                //throw;
-            }
-        }
-
-        private void LoadLineBreakAtStart(string lineBreakFilePath)
-        {
-            LineBreak = File.ReadAllText(lineBreakFilePath);
-            if (string.IsNullOrEmpty(LineBreak))
-            {
-                lineBreakToolStripMenuItem.Enabled = false;
-            }
-        }
-
-
         // BACK UP
         private void TimerStart()
         {
-            timer = new Timer();
-            timer.Interval = 1000;
-            timer.Elapsed += new ElapsedEventHandler(timer_Tick);
-
-            timer.Start();
+            backupTimer = new Timer { Interval = 60 * 1000 }; // 1 minute
+            backupTimer.Tick += BackupTimer_Tick;
+            backupTimer.Start();
         }
 
-        private void timer_Tick(object sender, ElapsedEventArgs e)
+        private void BackupTimer_Tick(object sender, EventArgs e)
         {
             if ((DateTime.Now - dateTimeSaved).Minutes >= 5)
             {
                 saveBackUp();
 
-                timer.Stop();
+                backupTimer.Stop();
                 dateTimeSaved = DateTime.Now;
-                timer.Start();
+                backupTimer.Start();
             }
             if (IsBackedUp)
             {
                 try
                 {
-                    this.Invoke((MethodInvoker)(() => backupStripStatusLabel.Text = $"Backup saved {(DateTime.Now - dateTimeSaved).Minutes} mins ago."));
-
+                    this.Invoke(
+                        (MethodInvoker)(
+                            () =>
+                                backupStripStatusLabel.Text =
+                                    $"Backup saved {(DateTime.Now - dateTimeSaved).Minutes} mins ago."
+                        )
+                    );
                 }
                 catch (Exception ex)
                 {
-                    string errPath = Environment.CurrentDirectory;
-                    File.AppendAllText($@"{errPath}\error.txt", $"[{DateTime.Now}]\n\r{ex.Message}\n\r\n\r");
-                    //throw;
+                    var errFile = Path.Combine(Environment.CurrentDirectory, "error.txt");
+                    File.AppendAllText(errFile, $"[{DateTime.Now}] {ex}\n\n");
                 }
             }
         }
 
-        private void saveBackUp()
+        internal void saveBackUp()
         {
+            var backupPath = Path.Combine(Environment.CurrentDirectory, "backup");
+            var errFile = Path.Combine(Environment.CurrentDirectory, "error.txt");
+
             try
             {
-                this.Invoke((MethodInvoker)(() =>
+                // Capture necessary UI state on the UI thread
+                var fileName = this.Text ?? string.Empty;
+                var content = textBoxMain.Text ?? string.Empty;
+
+                if (IsDirty && !string.IsNullOrEmpty(fileName) && fileName[0] == '*')
+                    fileName = fileName.Substring(1);
+
+                // Offload heavy IO and file system work to background thread
+                Task.Run(() =>
                 {
-
-                    string fileName = this.Text;
-                    if (IsTextChange == true && fileName[0] == '*')
+                    try
                     {
-                        fileName = fileName.Remove(0, 1);
-                    }
-
-                    string backupPath = Environment.CurrentDirectory + @"\backup";
-                    if (!Directory.Exists(backupPath))
                         Directory.CreateDirectory(backupPath);
 
-                    // SAVE BACK UP & DELETE DUPLICATE
-                    var fileList = Directory.GetFiles(backupPath, $@"*{fileName}*.txt")
-                        .Where(file => file.StartsWith($@"{backupPath}\{fileName}_"));
+                        // Save backup
+                        var timestamp = DateTime.Now.ToString("yyyy-MM-dd_hhmmss_tt");
+                        var safeFileName = MakeFileNameSafe(fileName);
+                        var backupFile = Path.Combine(
+                            backupPath,
+                            $"{safeFileName}_{timestamp}.txt"
+                        );
+                        File.WriteAllText(backupFile, content);
 
-                    File.WriteAllText($@"{backupPath}\{fileName}_{DateTime.Now:yyyy'-'MM'-'dd hhmmss tt}.txt", textBoxMain.Text);
+                        // Keep only the latest backup for this fileName
+                        var filePattern = $"{safeFileName}_*.txt";
+                        var files = Directory
+                            .GetFiles(backupPath, filePattern)
+                            .OrderByDescending(f => File.GetLastWriteTimeUtc(f))
+                            .ToArray();
 
-                    foreach (var file in fileList)
-                    {
-                        File.Delete(file);
+                        foreach (var f in files.Skip(1))
+                            TryDelete(f, errFile);
+
+                        // Delete files older than 7 days
+                        foreach (var f in Directory.GetFiles(backupPath))
+                        {
+                            try
+                            {
+                                if (File.GetLastWriteTimeUtc(f) < DateTime.UtcNow.AddDays(-7))
+                                    TryDelete(f, errFile);
+                            }
+                            catch (Exception ex)
+                            {
+                                File.AppendAllText(errFile, $"[{DateTime.Now}] {ex}\n\n");
+                            }
+                        }
+
+                        // Update UI-bound state on the UI thread
+                        try
+                        {
+                            this.Invoke(
+                                (MethodInvoker)(
+                                    () =>
+                                    {
+                                        lastBackupContent = content;
+                                        IsBackedUp = true;
+                                    }
+                                )
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            File.AppendAllText(errFile, $"[{DateTime.Now}] {ex}\n\n");
+                        }
                     }
-
-                    // DELETE FILES > 7 DAYS
-                    var directory = new DirectoryInfo(backupPath);
-                    var dirFiles = directory.GetFiles().Where(file => file.LastWriteTime < DateTime.Now.AddDays(-7));
-                    foreach (var item in dirFiles)
+                    catch (Exception ex)
                     {
-                        File.Delete($@"{backupPath}\{item}");
+                        File.AppendAllText(errFile, $"[{DateTime.Now}] {ex}\n\n");
                     }
-
-                    IsBackedUp = true;
-                }));
-
+                });
             }
             catch (Exception ex)
             {
-                string errPath = Environment.CurrentDirectory;
-                File.AppendAllText($@"{errPath}\error.txt", $"[{DateTime.Now}]\n\r{ex.Message}\n\r\n\r");
-                //throw;
+                File.AppendAllText(errFile, $"[{DateTime.Now}] {ex}\n\n");
             }
         }
 
+        private static string MakeFileNameSafe(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return "untitled";
+
+            var invalid = Path.GetInvalidFileNameChars();
+            foreach (var c in invalid)
+                name = name.Replace(c, '_');
+
+            return name;
+        }
+
+        private static void TryDelete(string filePath, String errFile)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+            }
+            catch (Exception ex)
+            {
+                errFile = Path.Combine(Environment.CurrentDirectory, "error.txt");
+                File.AppendAllText(errFile, $"[{DateTime.Now}] {ex}\n\n");
+            }
+        }
 
         // FIND AND REPLACE METHODS
-        public void FindAndSelect(string wordToFind, bool isMatchCase, bool isWholeWord, bool isSearchDown)
+        internal void FindAndSelect(
+            string wordToFind,
+            bool isMatchCase,
+            bool isWholeWord,
+            bool isSearchDown
+        )
         {
-            int index = 0;
+            if (string.IsNullOrEmpty(wordToFind))
+            {
+                MessageBox.Show("Nothing to find.", "Notepad Z");
+                return;
+            }
 
-            var stringComparison = isMatchCase ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
+            var stringComparison = isMatchCase
+                ? StringComparison.CurrentCulture
+                : StringComparison.CurrentCultureIgnoreCase;
             var regexOptions = isMatchCase ? RegexOptions.None : RegexOptions.IgnoreCase;
 
-            if (isSearchDown == true)
+            int index = -1;
+
+            if (isWholeWord)
             {
-                if (isWholeWord == true)
+                // Escape input before building regex to avoid accidental metacharacter behavior.
+                var escaped = Regex.Escape(wordToFind);
+                var rx = new Regex(
+                    @"\b" + escaped + @"\b",
+                    regexOptions | (isSearchDown ? RegexOptions.None : RegexOptions.RightToLeft)
+                );
+
+                var startPos =
+                    textBoxMain.SelectionStart + (isSearchDown ? textBoxMain.SelectionLength : -1);
+                if (startPos < 0)
+                    startPos = 0;
+
+                var match = rx.Match(textBoxMain.Text, isSearchDown ? startPos : 0);
+                if (isSearchDown)
                 {
-                    var matches = Regex.Matches(textBoxMain.Text, $@"\b{wordToFind}\b", regexOptions);
-                    if (matches.Count > 0)
+                    // find first match after selection
+                    foreach (Match m in rx.Matches(textBoxMain.Text))
                     {
-                        foreach (Match item in matches)
+                        if (m.Index > textBoxMain.SelectionStart)
                         {
-                            if (item.Index > textBoxMain.SelectionStart)
-                            {
-                                index = item.Index;
-                                break;
-                            }
-                            else
-                                index = -1;
+                            index = m.Index;
+                            break;
                         }
                     }
-                    else
-                        index = -1;
-
                 }
                 else
-                    index = textBoxMain.Text.IndexOf(wordToFind, textBoxMain.SelectionStart + textBoxMain.SelectionLength, stringComparison);
+                {
+                    // last match before selection
+                    for (int i = rx.Matches(textBoxMain.Text).Count - 1; i >= 0; i--)
+                    {
+                        var m = rx.Matches(textBoxMain.Text)[i];
+                        if (m.Index < textBoxMain.SelectionStart)
+                        {
+                            index = m.Index;
+                            break;
+                        }
+                    }
+                }
             }
             else
             {
-                if (isWholeWord == true)
-                {
-                    var matches = Regex.Matches(textBoxMain.Text, $@"\b{wordToFind}\b", regexOptions | RegexOptions.RightToLeft);
-                    if (matches.Count > 0)
-                    {
-                        foreach (Match item in matches)
-                        {
-                            if (item.Index < textBoxMain.SelectionStart)
-                            {
-                                index = item.Index;
-                                break;
-                            }
-                            else
-                                index = -1;
-                        }
-                    }
-                    else
-                        index = -1;
-                }
+                if (isSearchDown)
+                    index = textBoxMain.Text.IndexOf(
+                        wordToFind,
+                        textBoxMain.SelectionStart + textBoxMain.SelectionLength,
+                        stringComparison
+                    );
                 else
                 {
-                    int selectionStart = textBoxMain.SelectionStart - 1;
-                    if (selectionStart <= 0)
-                    {
-                        selectionStart = 0;
-                    }
-                    index = textBoxMain.Text.LastIndexOf(wordToFind, selectionStart, stringComparison);
+                    int selectionStart = Math.Max(0, textBoxMain.SelectionStart - 1);
+                    index = textBoxMain.Text.LastIndexOf(
+                        wordToFind,
+                        selectionStart,
+                        stringComparison
+                    );
                 }
             }
 
@@ -882,23 +494,28 @@ namespace Notepad_Z
             textBoxMain.SelectionLength = wordToFind.Length;
         }
 
-        public void FindAndReplaceAll(string wordToFind, string wordToReplace, bool isMatchCase, bool isWholeWord)
+        internal void FindAndReplaceAll(
+            string wordToFind,
+            string wordToReplace,
+            bool isMatchCase,
+            bool isWholeWord
+        )
         {
             var regexOptions = isMatchCase ? RegexOptions.None : RegexOptions.IgnoreCase;
-            var pattern = isWholeWord ? $@"\b{wordToFind}\b" : wordToFind;
+            var escaped = Regex.Escape(wordToFind);
+            var pattern = isWholeWord ? $@"\b{escaped}\b" : escaped;
 
+            int occurrence = Regex.Matches(textBoxMain.Text, pattern, regexOptions).Count;
+
+            // Avoid using clipboard: update the document directly.
             var replacedAll = Regex.Replace(textBoxMain.Text, pattern, wordToReplace, regexOptions);
+            textBoxMain.Text = replacedAll;
 
-            int occurence = Regex.Matches(textBoxMain.Text, pattern, regexOptions).Count;
-
-            textBoxMain.SelectAll();
-            textBoxMain.Paste(replacedAll);
-
-            MessageBox.Show($"Replaced {occurence} occurences.", "Replace All");
+            MessageBox.Show($"Replaced {occurrence} occurrences.", "Replace All");
             textBoxMain.SelectionStart = textBoxMain.Text.Length;
         }
 
-        private void findAndReplacePopup_VisibleChanged(object sender, EventArgs e)
+        internal void findAndReplacePopup_VisibleChanged(object sender, EventArgs e)
         {
             if (findAndReplacePopup.Visible)
             {
@@ -907,145 +524,5 @@ namespace Notepad_Z
             else
                 findAndReplacePopup.SendToBack();
         }
-
-
-        // STATUS STRIP 
-        private void UpdateLineAndColumn()
-        {
-            caretPosStripStatusLabel.Text = $"Ln {caretLine()}, Col {caretColumn()}";
-        }
-
-        private int caretLine()
-        {
-            return textBoxMain.GetLineFromCharIndex(textBoxMain.SelectionStart) + 1;
-        }
-
-        private int caretColumn()
-        {
-            return textBoxMain.SelectionStart - textBoxMain.GetFirstCharIndexOfCurrentLine() + 1;
-        }
-
-
-        // CONTEXT MENU STRIP
-        private void textBoxMainContexMenuStrip_Opened(object sender, EventArgs e)
-        {
-            if (Clipboard.GetText(TextDataFormat.Text) == "") pasteContextMenuItem.Enabled = false;
-            else pasteContextMenuItem.Enabled = true;
-
-            if (textBoxMain.SelectionLength > 0)
-            {
-                cutContextMenuItem.Enabled = true;
-                copyContextMenuItem.Enabled = true;
-                deleteContextMenuItem.Enabled = true;
-                checkFolderPathContextMenuItem.Enabled = true;
-            }
-            else
-            {
-                cutContextMenuItem.Enabled = false;
-                copyContextMenuItem.Enabled = false;
-                deleteContextMenuItem.Enabled = false;
-                checkFolderPathContextMenuItem.Enabled = false;
-            }
-
-            if (textBoxMain.SelectionLength == textBoxMain.Text.Length) selectAllContextMenuItem.Enabled = false;
-            else selectAllContextMenuItem.Enabled = true;
-        }
-
-        private void undoContextMenuItem_Click(object sender, EventArgs e) => textBoxMain.Undo();
-
-        private void copyContextMenuItem_Click(object sender, EventArgs e) => textBoxMain.Copy();
-
-        private void cutContextMenuItem_Click(object sender, EventArgs e) => textBoxMain.Cut();
-
-        private void pasteContextMenuItem_Click(object sender, EventArgs e) => textBoxMain.Paste();
-
-        private void deleteContextMenuItem_Click(object sender, EventArgs e) => textBoxMain.SelectedText = String.Empty;
-
-        private void selectAllContextMenuItem_Click(object sender, EventArgs e) => textBoxMain.SelectAll();
-
-        private void checkFolderPathContextMenuItem_Click(object sender, EventArgs e)
-        {
-            string selectedText = textBoxMain.SelectedText.Trim();
-            if (CheckIfDirectoryExists(selectedText) == true)
-            {
-                OpenSelectedFolderPath(selectedText);
-            }
-        }
-
-        private void checkFolderPermissionsContextMenuItem_Click(object sender, EventArgs e)
-        {
-            string selectedText = textBoxMain.SelectedText.Trim();
-            string appDirectory = Environment.CurrentDirectory + @"\Fil-Group-Lister.exe";
-
-            if (CheckIfDirectoryExists(selectedText) == true)
-            {
-                OpenFileGroupLister(selectedText, appDirectory);
-            }
-        }
-
-        private void checkPathAndPermissionsContextMenuItem_Click(object sender, EventArgs e)
-        {
-            string selectedText = textBoxMain.SelectedText.Trim();
-            string appDirectory = Environment.CurrentDirectory + @"\Fil-Group-Lister.exe";
-            if (CheckIfDirectoryExists(selectedText) == true)
-            {
-                OpenSelectedFolderPath(selectedText);
-                OpenFileGroupLister(selectedText, appDirectory);
-            }
-        }
-
-        private bool CheckIfDirectoryExists(string selectedText)
-        {
-            bool output;
-            if (Directory.Exists(selectedText) == false)
-            {
-                MessageBox.Show($"Path \"{selectedText}\" does not exist", "Error");
-                output = false;
-            }
-            else output = true;
-            return output;
-        }
-
-        private void OpenSelectedFolderPath(string selectedText)
-        {
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    Arguments = selectedText,
-                    FileName = "explorer.exe"
-                };
-                Process.Start(startInfo);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                throw;
-            }
-        }
-
-        private void OpenFileGroupLister(string selectedText, string appDirectory)
-        {
-            if (File.Exists(appDirectory) == true)
-            {
-                try
-                {
-                    ProcessStartInfo newProcess = new ProcessStartInfo
-                    {
-                        Arguments = selectedText,
-                        FileName = appDirectory
-                    };
-                    Process.Start(newProcess);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    throw;
-                }
-            }
-            else MessageBox.Show("Application Fil Group Lister missing", "Error");
-        }
-
-
     }
 }

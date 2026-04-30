@@ -34,7 +34,7 @@ namespace Notepad_Z
             var stringComparison = isMatchCase ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
             bool isSearchDown = true;
 
-            mainForm mainForm = this.ParentForm as mainForm;
+            MainForm mainForm = this.ParentForm as MainForm;
 
             if (mainForm.textBoxMain.SelectedText.Equals(wordToFind, stringComparison))
             {
@@ -54,7 +54,7 @@ namespace Notepad_Z
             bool isMatchCase = findAndReplaceControl.checkboxMatchCase.Checked;
             bool isWholeWord = findAndReplaceControl.checkboxMatchWholeWord.Checked;
 
-            mainForm mainForm = this.ParentForm as mainForm;
+            MainForm mainForm = this.ParentForm as MainForm;
             mainForm.FindAndReplaceAll(wordToFind, wordToReplace, isMatchCase, isWholeWord);
         }
 

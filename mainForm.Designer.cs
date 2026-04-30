@@ -2,7 +2,7 @@
 
 namespace Notepad_Z
 {
-    partial class mainForm
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace Notepad_Z
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,10 +91,12 @@ namespace Notepad_Z
             this.checkFolderPathContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkFolderPermissionsContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkPathAndPermissionsContextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelMainForm = new System.Windows.Forms.Panel();
             this.findAndReplacePopup = new Notepad_Z.FindAndReplaceControl();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.textBoxMainContextMenuStrip.SuspendLayout();
+            this.panelMainForm.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenuStrip
@@ -109,9 +111,10 @@ namespace Notepad_Z
             this.lineBreakToolStripMenuItem,
             this.prefStripMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.mainMenuStrip.MinimumSize = new System.Drawing.Size(0, 30);
             this.mainMenuStrip.Name = "mainMenuStrip";
             this.mainMenuStrip.Padding = new System.Windows.Forms.Padding(2, 2, 0, 2);
-            this.mainMenuStrip.Size = new System.Drawing.Size(458, 27);
+            this.mainMenuStrip.Size = new System.Drawing.Size(458, 30);
             this.mainMenuStrip.TabIndex = 1;
             this.mainMenuStrip.Text = "menuStrip1";
             // 
@@ -127,7 +130,7 @@ namespace Notepad_Z
             this.toolStripMenuItem2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 23);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 26);
             this.fileToolStripMenuItem.Text = "&File";
             // 
             // newToolStripMenuItem
@@ -197,7 +200,7 @@ namespace Notepad_Z
             this.toolStripSeparator1,
             this.selectAllToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 23);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 26);
             this.editToolStripMenuItem.Text = "&Edit";
             this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
@@ -282,7 +285,7 @@ namespace Notepad_Z
             this.fontToolStripMenuItem,
             this.zoomToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 26);
             this.viewToolStripMenuItem.Text = "&View";
             // 
             // wordWrapToolStripMenuItem
@@ -345,13 +348,13 @@ namespace Notepad_Z
             this.templateToolStripComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.templateToolStripComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.templateToolStripComboBox.Name = "templateToolStripComboBox";
-            this.templateToolStripComboBox.Size = new System.Drawing.Size(140, 23);
+            this.templateToolStripComboBox.Size = new System.Drawing.Size(140, 26);
             this.templateToolStripComboBox.SelectedIndexChanged += new System.EventHandler(this.templateToolStripComboBox_SelectedIndexChanged);
             // 
             // lineBreakToolStripMenuItem
             // 
             this.lineBreakToolStripMenuItem.Name = "lineBreakToolStripMenuItem";
-            this.lineBreakToolStripMenuItem.Size = new System.Drawing.Size(73, 23);
+            this.lineBreakToolStripMenuItem.Size = new System.Drawing.Size(73, 26);
             this.lineBreakToolStripMenuItem.Text = "Line &Break";
             this.lineBreakToolStripMenuItem.Click += new System.EventHandler(this.lineBreakToolStripMenuItem_Click);
             // 
@@ -429,7 +432,7 @@ namespace Notepad_Z
             this.backupStripStatusLabel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.backupStripStatusLabel.Name = "backupStripStatusLabel";
             this.backupStripStatusLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.backupStripStatusLabel.Size = new System.Drawing.Size(121, 20);
+            this.backupStripStatusLabel.Size = new System.Drawing.Size(122, 20);
             this.backupStripStatusLabel.Text = "Back up not yet saved.";
             this.backupStripStatusLabel.ToolTipText = "Back up status";
             // 
@@ -473,7 +476,7 @@ namespace Notepad_Z
             // 
             this.caretPosStripStatusLabel.Name = "caretPosStripStatusLabel";
             this.caretPosStripStatusLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.caretPosStripStatusLabel.Size = new System.Drawing.Size(202, 20);
+            this.caretPosStripStatusLabel.Size = new System.Drawing.Size(201, 20);
             this.caretPosStripStatusLabel.Spring = true;
             this.caretPosStripStatusLabel.Text = "Ln 0, Col 0";
             this.caretPosStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -481,17 +484,19 @@ namespace Notepad_Z
             // textBoxMain
             // 
             this.textBoxMain.AcceptsTab = true;
+            this.textBoxMain.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.textBoxMain.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
             this.textBoxMain.BackColor = System.Drawing.Color.White;
             this.textBoxMain.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxMain.Font = new System.Drawing.Font("Consolas", 11.25F);
-            this.textBoxMain.Location = new System.Drawing.Point(0, 27);
+            this.textBoxMain.Location = new System.Drawing.Point(5, 2);
             this.textBoxMain.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxMain.MaxLength = 2000000000;
             this.textBoxMain.Multiline = true;
             this.textBoxMain.Name = "textBoxMain";
             this.textBoxMain.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxMain.Size = new System.Drawing.Size(458, 478);
+            this.textBoxMain.Size = new System.Drawing.Size(453, 473);
             this.textBoxMain.TabIndex = 8;
             this.textBoxMain.WordWrap = false;
             this.textBoxMain.TextChanged += new System.EventHandler(this.textBoxMain_TextChanged);
@@ -598,6 +603,18 @@ namespace Notepad_Z
             this.checkPathAndPermissionsContextMenuItem.Text = "Check Path and Permissions";
             this.checkPathAndPermissionsContextMenuItem.Click += new System.EventHandler(this.checkPathAndPermissionsContextMenuItem_Click);
             // 
+            // panelMainForm
+            // 
+            this.panelMainForm.AutoSize = true;
+            this.panelMainForm.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelMainForm.Controls.Add(this.textBoxMain);
+            this.panelMainForm.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMainForm.Location = new System.Drawing.Point(0, 30);
+            this.panelMainForm.Name = "panelMainForm";
+            this.panelMainForm.Padding = new System.Windows.Forms.Padding(5, 2, 0, 0);
+            this.panelMainForm.Size = new System.Drawing.Size(458, 475);
+            this.panelMainForm.TabIndex = 9;
+            // 
             // findAndReplacePopup
             // 
             this.findAndReplacePopup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -620,22 +637,22 @@ namespace Notepad_Z
             this.findAndReplacePopup.WordToFind = "";
             this.findAndReplacePopup.VisibleChanged += new System.EventHandler(this.findAndReplacePopup_VisibleChanged);
             // 
-            // mainForm
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(458, 530);
             this.Controls.Add(this.findAndReplacePopup);
-            this.Controls.Add(this.textBoxMain);
-            this.Controls.Add(this.statusStrip);
+            this.Controls.Add(this.panelMainForm);
             this.Controls.Add(this.mainMenuStrip);
+            this.Controls.Add(this.statusStrip);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.mainMenuStrip;
             this.MinimumSize = new System.Drawing.Size(340, 350);
-            this.Name = "mainForm";
+            this.Name = "MainForm";
             this.Text = "Notepad Z";
             this.Activated += new System.EventHandler(this.MainForm_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -646,6 +663,8 @@ namespace Notepad_Z
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.textBoxMainContextMenuStrip.ResumeLayout(false);
+            this.panelMainForm.ResumeLayout(false);
+            this.panelMainForm.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -712,6 +731,7 @@ namespace Notepad_Z
         private ToolStripMenuItem checkFolderPathContextMenuItem;
         private ToolStripMenuItem checkFolderPermissionsContextMenuItem;
         private ToolStripMenuItem checkPathAndPermissionsContextMenuItem;
+        private Panel panelMainForm;
     }
 }
 
